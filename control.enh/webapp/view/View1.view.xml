@@ -1,0 +1,13 @@
+<mvc:View controllerName="com.iggit.control.enh.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:unified="sap.ui.unified"
+    xmlns:my="com.iggit.control.enh.control">
+
+    <Page id="page" title="{i18n>title}">
+        <content>
+            <my:myCalendar id="myCalendar-1" specialDay="20250903" legend="legend-1" specialDays="{specialDays>/data}" />
+            <unified:CalendarLegend id="legend-1"></unified:CalendarLegend>
+        </content>
+    </Page>
+</mvc:View>
