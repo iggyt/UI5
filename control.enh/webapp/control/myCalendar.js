@@ -13,7 +13,36 @@ sap.ui.define(
           customEvent: {},
         },
       },
+      init: function () {
+        Calendar.prototype.init &&
+          Calendar.prototype.init.apply(this, arguments);
 
+        // Attach a click event to handle special day background persistence
+        this.attachEvent(
+          "select",
+          function () {
+            var specialDays = this.getSpecialDays();
+            if (specialDays && specialDays.length > 0) {
+              var $days = this.$().find(".sapUiCalItem");
+              $days.each(function () {
+                var $day = $(this);
+                var matchingDays = specialDays.filter(function (specialDay) {
+                  return $day.attr("data-sap-day") === specialDay.date;
+                });
+
+                if (matchingDays.length > 0) {
+                  var gradientColors = matchingDays
+                    .map(function (day) {
+                      return day.color;
+                    })
+                    .join(", ");
+                  $day.css("background", `linear-gradient(${gradientColors})`);
+                }
+              });
+            }
+          }.bind(this)
+        );
+      },
       renderer: {},
 
       onAfterRendering: function () {
@@ -47,9 +76,11 @@ sap.ui.define(
             });
 
             if (matchingDays.length > 0) {
-              var gradientColors = matchingDays.map(function (day) {
-                return day.color;
-              }).join(", ");
+              var gradientColors = matchingDays
+                .map(function (day) {
+                  return day.color;
+                })
+                .join(", ");
               $day.css("background", `linear-gradient(${gradientColors})`);
             }
           });
