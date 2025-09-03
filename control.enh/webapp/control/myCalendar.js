@@ -17,7 +17,7 @@ sap.ui.define(
         Calendar.prototype.init &&
           Calendar.prototype.init.apply(this, arguments);
 
-        // Attach a click event to handle special day background persistence
+        // Attach a select event to handle special day background persistence
         this.attachEvent(
           "select",
           function () {
@@ -42,6 +42,14 @@ sap.ui.define(
             }
           }.bind(this)
         );
+
+        this.attachEvent("startDateChange", function (oEvent) {
+          // Handle start date change
+          // this._updateSpecialDays();
+          setTimeout(() => {
+            this.onAfterRendering();
+          }, 100);
+        }.bind(this));
       },
       renderer: {},
 
@@ -66,25 +74,28 @@ sap.ui.define(
           });
         }
 
-        var specialDays = this.getSpecialDays();
-        if (specialDays && specialDays.length > 0) {
-          var $days = this.$().find(".sapUiCalItem");
-          $days.each(function () {
-            var $day = $(this);
-            var matchingDays = specialDays.filter(function (specialDay) {
-              return $day.attr("data-sap-day") === specialDay.date;
-            });
+        this._updateSpecialDays = function () {
+          var specialDays = this.getSpecialDays();
+          if (specialDays && specialDays.length > 0) {
+            var $days = this.$().find(".sapUiCalItem");
+            $days.each(function () {
+              var $day = $(this);
+              var matchingDays = specialDays.filter(function (specialDay) {
+                return $day.attr("data-sap-day") === specialDay.date;
+              });
 
-            if (matchingDays.length > 0) {
-              var gradientColors = matchingDays
-                .map(function (day) {
-                  return day.color;
-                })
-                .join(", ");
-              $day.css("background", `linear-gradient(${gradientColors})`);
-            }
-          });
-        }
+              if (matchingDays.length > 0) {
+                var gradientColors = matchingDays
+                  .map(function (day) {
+                    return day.color;
+                  })
+                  .join(", ");
+                $day.css("background", `linear-gradient(${gradientColors})`);
+              }
+            });
+          }
+        };
+        this._updateSpecialDays();
       },
 
       fireCustomEvent: function () {
